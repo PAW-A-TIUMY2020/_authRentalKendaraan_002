@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using RentalKendaraan_002.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace RentalKendaraan_002.Controllers
 {
@@ -18,6 +19,7 @@ namespace RentalKendaraan_002.Controllers
             _context = context;
         }
 
+        [Authorize(Policy = "readonlypolicy")]
         // GET: Peminjamen
         public async Task<IActionResult> Index(string ktsd, string searchString, string sortOrder, string currentFilter, int? pageNumber)
         {
@@ -90,10 +92,13 @@ namespace RentalKendaraan_002.Controllers
 
             return View(peminjaman);
         }
-
+        [Authorize(Policy = "writepolicy")]
         // GET: Peminjamen/Create
         public IActionResult Create()
         {
+            ViewData["IdCustomer"] = new SelectList(_context.Customer, "IdCustomer", "NamaCustomer");
+            ViewData["Jaminan"] = new SelectList(_context.Jaminan, "IdJaminan", "NamaJaminan");
+            ViewData["IdKendaraan"] = new SelectList(_context.Kendaraan, "IdKendaraan", "NamaKendaraan");
             return View();
         }
 
@@ -113,6 +118,7 @@ namespace RentalKendaraan_002.Controllers
             return View(peminjaman);
         }
 
+        [Authorize(Policy = "editpolicy")]
         // GET: Peminjamen/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
@@ -164,6 +170,7 @@ namespace RentalKendaraan_002.Controllers
             return View(peminjaman);
         }
 
+        [Authorize(Policy = "deletepolicy")]
         // GET: Peminjamen/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
